@@ -1,41 +1,61 @@
 import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
+require('../services');
 
-import web_server from '../services/web_server';
-import management from '../services/management';
-import angular from '../services/angular';
+// import web_server from '../services/web_server';
+// import management from '../services/management';
+// import angular from '../services/angular';
 
-class Application {
+export class Application {
+  private static _instance: Application = null;
 
   public express: express.Application;
 
   // run configuration methods on the express instance.
-  constructor() { 
+  private constructor() { 
+    console.log("Application:construcot: is called")
     this.express = express();
-    this.middleware();
-    this.routes();
+    this.middleware();    
+  }
+
+  public static get instance() {
+    return this._instance || (this._instance = new this());
   }
 
   // configure express middleware.
   private middleware(): void {
     this.express.use(logger('dev'));
+    this.express.use(cors());
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({extended: false}));
   }
 
-  private routes(): void {
-    this.express.use('/web_srv', web_server.add())
-    this.express.use('/web_api', management.add());
-    this.express.use('/angular', angular.add());
+  /**
+   * 
+   * @param where - thed of which the service is route (regular express path)
+   * @param service - a class which implement this route
+   */
+  register(where, service) {
+    console.log("going to add " + where);
+    this.express.use(where, service.add());
+  }
+
+  listen(host: string, port: number) {
+    this.express.listen(port, () => {
+      // success callback
+      console.log(`Listening at http://${host}:${port}/`);
+    });
   }
 }
 
-let application = new Application();
+//export default // let application = new Application();
 
-const port: number = 3000;
+// const port: number = 3000;
 
-application.express.listen(port, () => {
-    // success callback
-    console.log(`Listening at http://localhost:${port}/`);
-});
+// application.express.listen(port, () => {
+//     // success callback;
+//     console.log(`Listening at http://localhost:${port}/`);
+// });
+
