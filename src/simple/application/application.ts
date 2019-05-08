@@ -2,26 +2,16 @@ import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-require('../services');
 
-// import web_server from '../services/web_server';
-// import management from '../services/management';
-// import angular from '../services/angular';
-
-export class Application {
-  private static _instance: Application = null;
+export const Application  = new class {  
 
   public express: express.Application;
 
   // run configuration methods on the express instance.
-  private constructor() { 
+  constructor() { 
     console.log("Application:construcot: is called")
     this.express = express();
     this.middleware();    
-  }
-
-  public static get instance() {
-    return this._instance || (this._instance = new this());
   }
 
   // configure express middleware.

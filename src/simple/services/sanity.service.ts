@@ -1,10 +1,11 @@
 import * as express from 'express';
 import { Application } from '../application/application';
+import { Service } from '../application/service';
 
-export class SanityService {
+export class SanityService implements Service {
 
   constructor() {
-    Application.instance.register('/', this);
+    Application.register('/sanity', this);
   }
 
   public add(): express.Router {
