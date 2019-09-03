@@ -1,1 +1,2 @@
-export * from './sanity.service';
+import './help.route';
+import './vidly.route';
